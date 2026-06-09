@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import Enum
 
 from .models import AccountCategory, ApprovalRequirement, TransactionRequest, TransactionType
 
@@ -64,17 +65,29 @@ DEPOSIT_RULES = {
 }
 
 
+class AmountTier(str, Enum):
+    LOW = "low"
+    MID = "mid"
+    HIGH = "high"
+
+
 class ApprovalPolicyEngine:
     """Translates transaction data into approval requirements."""
 
     def determine_requirements(self, request: TransactionRequest) -> list[ApprovalRequirement]:
+        _, requirements = self.determine_policy(request)
+        return requirements
+
+    def determine_policy(self, request: TransactionRequest) -> tuple[AmountTier, list[ApprovalRequirement]]:
         rules = WITHDRAWAL_RULES if request.transaction_type == TransactionType.WITHDRAWAL else DEPOSIT_RULES
         effective_amount = request.effective_amount_hkd()
         selected: list[ApprovalRequirement] = []
+        tier = AmountTier.HIGH
 
-        for rule in rules[request.account_category]:
+        for index, rule in enumerate(rules[request.account_category]):
             if rule.matches(effective_amount):
                 selected = [ApprovalRequirement(item.role_code, item.display_name, item.reason, item.mandatory) for item in rule.requirements]
+                tier = AmountTier.LOW if index == 0 else AmountTier.MID if index == 1 else AmountTier.HIGH
                 break
 
         if request.transaction_type == TransactionType.WITHDRAWAL and (
@@ -89,4 +102,4 @@ class ApprovalPolicyEngine:
                 )
             )
 
-        return selected
+        return tier, selected
