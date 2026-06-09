@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+import sys
 from dataclasses import asdict
 from datetime import datetime, timedelta
 from typing import Any
@@ -141,7 +143,17 @@ class SilentNotifier:
 
 repository = SqliteCaseRepository()
 ensure_default_templates(repository)
-email_gateway = InMemoryEmailGateway()
+
+gateway_name = os.getenv("AUTOMAIL_EMAIL_GATEWAY", "memory").lower()
+if gateway_name == "outlook_com":
+    if not sys.platform.startswith("win"):
+        raise RuntimeError("AUTOMAIL_EMAIL_GATEWAY=outlook_com requires Windows Outlook desktop")
+    from .adapters.outlook_com import OutlookComGateway
+
+    email_gateway = OutlookComGateway()
+else:
+    email_gateway = InMemoryEmailGateway()
+
 packager = LocalFileAttachmentPackager(output_dir="outbox")
 service = ApprovalWorkflowService(
     policy_engine=ApprovalPolicyEngine(),
@@ -228,6 +240,9 @@ def seed_demo_approvals(case_id: str) -> dict[str, Any]:
         workflow_case = repository.get_case(case_id)
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    if not hasattr(email_gateway, "seed_replies"):
+        raise HTTPException(status_code=400, detail="Demo seeding requires in-memory email gateway")
 
     base_time = utc_now()
     actions: list[ApprovalAction] = []

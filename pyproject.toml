@@ -16,5 +16,10 @@ dependencies = [
   "uvicorn[standard]>=0.30",
 ]
 
+[project.optional-dependencies]
+outlook = [
+  "pywin32>=306",
+]
+
 [tool.setuptools]
 packages = ["automail", "automail.adapters"]
