@@ -1,0 +1,4 @@
+outbox/ab63a88fa547/initial_email.txt
+outbox/ab63a88fa547/approval_reply_1_hco.txt
+outbox/ab63a88fa547/approval_reply_2_hf.txt
+outbox/ab63a88fa547/approval_reply_3_risk_management.txt

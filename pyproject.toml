@@ -11,6 +11,10 @@ requires-python = ">=3.11"
 authors = [
   { name = "TRAE Assistant" }
 ]
+dependencies = [
+  "fastapi>=0.110",
+  "uvicorn[standard]>=0.30",
+]
 
 [tool.setuptools]
 packages = ["automail", "automail.adapters"]
