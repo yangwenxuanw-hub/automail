@@ -1,0 +1,17 @@
+Subject: [Approval Needed][9977f3313150] ABC Capital Client Withdrawal 13,000,000.00 HKD
+
+Approval request for client operation.
+
+Case ID: 9977f3313150
+Transaction: Withdrawal
+Client Name: ABC Capital Client
+Account No: AC-778899
+Beneficiary: ABC Capital Client
+Instruction Type: si_fop_dvp
+Amount (HKD): 12,500,000.00
+Effective Approval Amount (HKD): 13,000,000.00
+Requested By: ops.requester@company.com
+Purpose: Client securities withdrawal
+Required Approvers: HCO, HF, Risk Management
+
+Please reply with APPROVED or REJECTED together with your remarks.
